@@ -95,7 +95,7 @@ def get_game_day(weekday=3):
 
 def get_game_day_weather_info():
     game_day = get_game_day(4)
-    game_day = game_day.replace(hour=21, minute=0, second=0)
+    game_day = game_day.replace(hour=18, minute=0, second=0)
 
     return get_weather_info(game_day, location="大安區",
                             default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_day.strftime("%a")))
