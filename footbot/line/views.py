@@ -82,10 +82,14 @@ def parse_events(events):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     if u'開團' in event.message.text:
-        open_new_game(event)
+        field = event.message.text.replace("開團", "").strip()
+        field = "台科大" if field == "" else field
+        open_new_game(event, field)
 
     elif u"天氣" in event.message.text:
-        now_weather(event)
+        location = event.message.text.replace("天氣", "").strip()
+        location = "大安區" if location == "" else location
+        now_weather(event, location)
 
 
 def get_game_day(weekday=3):
@@ -101,12 +105,13 @@ def get_game_day_weather_info():
                             default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_day.strftime("%a")))
 
 
-def open_new_game(event):
+def open_new_game(event, field):
     game_day = get_game_day(4)
+
     field_zhtw = "台科大平地足球場"
     field_enus = "on NTUST hard ground football field"
 
-    if "福和橋" in event.message.text:
+    if field == u"福和橋":
         field_zhtw = "福和橋下永和端平地場"
         field_enus = "on hard ground football field under FuHo bridge (Yonghe)"
 
@@ -130,12 +135,9 @@ def open_new_game(event):
                                TextSendMessage(text=game_msg + weather_info))
 
 
-def now_weather(event):
+def now_weather(event, location):
 
     now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
-
-    location = event.message.text.replace("天氣", "").strip()
-    location = "大安區" if location == "" else location
 
     info = get_weather_info(now, location,
                             default_info="目前查無" + location + "天氣")
