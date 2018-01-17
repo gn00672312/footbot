@@ -95,7 +95,7 @@ def get_game_day(weekday=3):
 
 def get_game_day_weather_info():
     game_day = get_game_day(4)
-    game_day = game_day.replace(hour=20, minute=0, second=0)
+    game_day = game_day.replace(hour=21, minute=0, second=0)
 
     return get_weather_info(game_day, location="大安區",
                             default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_day.strftime("%a")))
@@ -175,9 +175,10 @@ def get_weather_info(target_dt, location="大安區", default_info="目前查無
             end_time = datetime.datetime.strptime(fcst["endTime"], "%Y-%m-%d %H:%M:%S")
             weather_desc = fcst["elementValue"]
 
-            # 抓目標時間的3小時內預報
+            # 抓目標時間的1.5小時內預報
+            # 例如...1/1 10:00 抓 09:00 ~ 12:00, 1/1 11:30 抓 12:00 ~ 15:00
             delta = target_dt - start_time
-            if first_fcst_time is None and abs(delta.days * 24 + delta.seconds / 3600) <= 3:
+            if first_fcst_time is None and abs(delta.days * 24 * 3600 + delta.seconds) <= 4800:
 
                 first_fcst_time = start_time
                 weather_info = (u"3小時天氣預報 - 預報時間：\n" +
