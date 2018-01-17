@@ -81,7 +81,7 @@ def parse_events(events):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    if event.message.text == u"開團":
+    if u'開團' in event.message.text:
         open_new_game(event)
 
     elif u"天氣" in event.message.text:
@@ -107,8 +107,8 @@ def open_new_game(event):
     field_enus = "on NTUST hard ground football field"
 
     if "福和橋" in event.message.text:
-        field_zhtw = "福和橋下永和端"
-        field_enus = "under FuHo bridge (Yonghe) hard ground football field"
+        field_zhtw = "福和橋下永和端平地場"
+        field_enus = "on hard ground football field under FuHo bridge (Yonghe)"
 
     game_msg_zhtw = ("【練球團】{game_day} \n" +
                      field_zhtw + " \n\n"
@@ -133,8 +133,8 @@ def open_new_game(event):
 def now_weather(event):
 
     now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
-    location = event.message.text.replace("天氣", "").strip()
 
+    location = event.message.text.replace("天氣", "").strip()
     location = "大安區" if location == "" else location
 
     info = get_weather_info(now, location,
