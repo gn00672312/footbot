@@ -36,7 +36,7 @@ logger = logging.getLogger('testlogger')
 
 
 def index(request):
-    return render(request, "echobot/index.html", {})
+    return render(request, "line/index.html", {})
 
 
 @csrf_exempt
@@ -84,7 +84,7 @@ def handle_text_message(event):
     if event.message.text == u"開團":
         open_new_game(event)
 
-    elif event.message.text == u"天氣":
+    elif u"天氣" in event.message.text:
         now_weather(event)
 
 
@@ -94,19 +94,29 @@ def get_game_day(weekday=3):
 
 
 def get_game_day_weather_info():
-    game_day = get_game_day()
+    game_day = get_game_day(4)
     game_day = game_day.replace(hour=18, minute=0, second=0)
 
-    return get_weather_info(game_day, default_info="目前查無週三晚上的大安區天氣預報")
+    return get_weather_info(game_day, location="大安區",
+                            default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_day.strftime("%a")))
 
 
 def open_new_game(event):
-    game_day = get_game_day()
+    game_day = get_game_day(4)
 
-    game_msg = ("【練球團】{game_day} \n"
-                "台科大平地足球場 \n\n"
-                "今晚10:30前有4人以上成團，請盡量帶球，能到的請回+1，謝謝 \n"
-                ).format(game_day=game_day.strftime("%m/%d (%a) 7:30 PM"))
+    game_msg_zhtw = ("【練球團】{game_day} \n"
+                     "台科大平地足球場 \n\n"
+                     "今晚10:30前有4人以上成團，明晚如下雨則取消，請盡量帶球，能到的請回+1，謝謝 \n"
+                     ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
+
+    game_msg_enus = ("【It's Football Time】{game_day} \n"
+                     "on NTUST hard ground football field \n\n"
+                     "It might rain tmr, but we'll still do a headcount first. "
+                     "If u can come, please reply '+1', thx! "
+                     "If less than 4 people reply '+1' before 10:30pm tonight, the game'll be canceled. \n"
+                     ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
+
+    game_msg = game_msg_zhtw + "\n" + game_msg_enus + "\n"
 
     weather_info = get_game_day_weather_info()
 
@@ -117,31 +127,43 @@ def open_new_game(event):
 def now_weather(event):
 
     now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
-    info = get_weather_info(now)
+    location = event.message.text.replace("天氣", "").strip()
+
+    location = "大安區" if location == "" else location
+
+    info = get_weather_info(now, location,
+                            default_info="目前查無" + location + "天氣")
 
     line_bot_api.reply_message(event.reply_token,
                                TextSendMessage(text=info))
 
 
-def fetch_daan_forecast():
+def fetch_forecast(location="大安區"):
     logger.info("get cwb weather forecast")
     url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/{data_id}"
 
-    params = dict(Authorization=CWB_API_KEY, locationName="大安區",
-                  format="json", elementName="WeatherDescription")
+    try:
+        params = dict(Authorization=CWB_API_KEY, locationName=location,
+                      format="json", elementName="WeatherDescription")
 
-    req = requests.get(url.format(data_id=TAIPEI_2D_FCST), params=params, verify=False)
-    context = json.loads(req.text)
-    daan_fcst = context["records"]["locations"][0]["location"][0]
+        req = requests.get(url.format(data_id=TAIPEI_2D_FCST), params=params, verify=False)
+        context = json.loads(req.text)
+        fcst = context["records"]["locations"][0]["location"][0]
 
-    return daan_fcst["weatherElement"]
+        return fcst["weatherElement"]
+
+    except Exception:
+        return None
 
 
-def get_weather_info(target_dt, default_info="目前查無大安區天氣"):
-    weather_elems = fetch_daan_forecast()
+def get_weather_info(target_dt, location="大安區", default_info="目前查無大安區天氣"):
+    weather_elems = fetch_forecast(location)
 
     weather_info = default_info
     first_fcst_time = None
+
+    if weather_elems is None:
+        return default_info
 
     logger.info("parsing api request")
     for we in weather_elems:
@@ -158,9 +180,10 @@ def get_weather_info(target_dt, default_info="目前查無大安區天氣"):
             if first_fcst_time is None and abs(delta.days * 24 + delta.seconds / 3600) <= 3:
 
                 first_fcst_time = start_time
-                weather_info = (u"預報時間：\n" +
-                                start_time.strftime("%m/%d %H:%M") + " ~ " + end_time.strftime("%m/%d %H:%M") + "\n" +
-                                u"大安區天氣概況：\n" +
+                weather_info = (u"3小時天氣預報 - 預報時間：\n" +
+                                start_time.strftime("%m/%d(%a) %H:%M") + " ~ " +
+                                end_time.strftime("%H:%M") + "\n" +
+                                location + u"天氣概況：\n" +
                                 weather_desc)
 
     logger.info("parsed api request success")

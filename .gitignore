@@ -5,5 +5,5 @@ __MAC*
 static/*
 .idea/*
 cache/*
-chatbot/echobot/migrations/__init__.py
+footbot/line/migrations/__init__.py
 env/.env

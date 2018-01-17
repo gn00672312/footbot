@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime, timedelta
 import sys
 
-from footbot.echobot.views import get_weather_info, get_game_day_weather_info
+from footbot.line.views import get_weather_info, get_game_day_weather_info
 
 
 class APITester(unittest.TestCase):

@@ -29,7 +29,7 @@ ps. 可以用 anaconda 2.7 or 3.6 來建立 pyenv ，內建的 libs 很豐富
 ### step 2. 開一個新APP
 ```shell=
     cd mychatbot/mychatbot
-    django-admin.py startapp echobot
+    django-admin.py startapp line
 
     vi settings.py
 ```
@@ -49,16 +49,16 @@ ps. 可以用 anaconda 2.7 or 3.6 來建立 pyenv ，內建的 libs 很豐富
         
         # my app
         'mychatbot',
-        'mychatbot.echobot',
+        'mychatbot.line',
     ]
 
     ...
 ```
 
-### step 3. 來寫 line 的 echobot 吧
+### step 3. 來寫 line 的 line 吧
 
 前面 import django 的東西不多說了～
-final code 可以參考我的 github，下面會一步一步把 echobot 實作出來
+final code 可以參考我的 github，下面會一步一步把 line 實作出來
 
 #### step 3.1 import linebot
 首先要 import linebot 的 api lib 跟一些 event 相關模組

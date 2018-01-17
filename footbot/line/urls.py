@@ -3,7 +3,7 @@
 
 from django.conf.urls import url
 
-from footbot.echobot import views
+from footbot.line import views
 
 urlpatterns = [
     url("^$", views.index),

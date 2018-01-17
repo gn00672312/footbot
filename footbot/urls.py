@@ -14,9 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from footbot.echobot import urls as echobot
+from footbot.line import urls as line
 
 urlpatterns = [
-    url(r'^echobot/', include(echobot))
+    url(r'^line/', include(line))
 ]
 
