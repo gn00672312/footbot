@@ -103,14 +103,20 @@ def get_game_day_weather_info():
 
 def open_new_game(event):
     game_day = get_game_day(4)
+    field_zhtw = "台科大平地足球場"
+    field_enus = "on NTUST hard ground football field"
 
-    game_msg_zhtw = ("【練球團】{game_day} \n"
-                     "台科大平地足球場 \n\n"
+    if "福和橋" in event.message.text:
+        field_zhtw = "福和橋下永和端"
+        field_enus = "under FuHo bridge (Yonghe) hard ground football field"
+
+    game_msg_zhtw = ("【練球團】{game_day} \n" +
+                     field_zhtw + " \n\n"
                      "今晚10:30前有4人以上成團，明晚如下雨則取消，請盡量帶球，能到的請回+1，謝謝 \n"
                      ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
 
-    game_msg_enus = ("【It's Football Time】{game_day} \n"
-                     "on NTUST hard ground football field \n\n"
+    game_msg_enus = ("【It's Football Time】{game_day} \n" +
+                     field_enus + " \n\n"
                      "It might rain tmr, but we'll still do a headcount first. "
                      "If u can come, please reply '+1', thx! "
                      "If less than 4 people reply '+1' before 10:30pm tonight, the game'll be canceled. \n"
