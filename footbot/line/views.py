@@ -30,7 +30,9 @@ handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
 CWB_API_KEY = settings.CWB_API_KEY
 VERSION = 'parser'
 
-TAIPEI_2D_FCST = "F-D0047-061"
+TAIWAN_FCST = "F-D0047-093"
+TAIPEI_ID = "F-D0047-061"
+NEW_TAIPEI_ID = "F-D0047-069"
 
 logger = logging.getLogger('testlogger')
 
@@ -151,14 +153,21 @@ def fetch_forecast(location="大安區"):
     url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/{data_id}"
 
     try:
-        params = dict(Authorization=CWB_API_KEY, locationName=location,
+        params = dict(Authorization=CWB_API_KEY, locationId=",".join([TAIPEI_ID, NEW_TAIPEI_ID]),
+                      locationName=location,
                       format="json", elementName="WeatherDescription")
 
-        req = requests.get(url.format(data_id=TAIPEI_2D_FCST), params=params, verify=False)
+        req = requests.get(url.format(data_id=TAIWAN_FCST), params=params, verify=False)
         context = json.loads(req.text)
-        fcst = context["records"]["locations"][0]["location"][0]
 
-        return fcst["weatherElement"]
+        fcst = None
+        for county_fcst in context["records"]["locations"]:
+            fcst = next(iter(county_fcst["location"] or []), None)
+
+            if fcst is not None:
+                break
+
+        return fcst["weatherElement"] if fcst else None
 
     except Exception:
         return None
@@ -166,36 +175,33 @@ def fetch_forecast(location="大安區"):
 
 def get_weather_info(target_dt, location="大安區", default_info="目前查無大安區天氣"):
     weather_elems = fetch_forecast(location)
-
     weather_info = default_info
-    first_fcst_time = None
 
-    if weather_elems is None:
-        return default_info
+    if weather_elems is not None:
+        first_fcst_time = None
+        logger.info("parsing api request")
+        for we in weather_elems:
+            if not we["elementName"] == "WeatherDescription":
+                continue
 
-    logger.info("parsing api request")
-    for we in weather_elems:
-        if not we["elementName"] == "WeatherDescription":
-            continue
+            for fcst in we["time"]:
+                start_time = datetime.datetime.strptime(fcst["startTime"], "%Y-%m-%d %H:%M:%S")
+                end_time = datetime.datetime.strptime(fcst["endTime"], "%Y-%m-%d %H:%M:%S")
+                weather_desc = fcst["elementValue"]
 
-        for fcst in we["time"]:
-            start_time = datetime.datetime.strptime(fcst["startTime"], "%Y-%m-%d %H:%M:%S")
-            end_time = datetime.datetime.strptime(fcst["endTime"], "%Y-%m-%d %H:%M:%S")
-            weather_desc = fcst["elementValue"]
+                # 抓目標時間的1.5小時內預報
+                # 例如...1/1 10:00 抓 09:00 ~ 12:00, 1/1 11:30 抓 12:00 ~ 15:00
+                delta = target_dt - start_time
+                if first_fcst_time is None and abs(delta.days * 24 * 3600 + delta.seconds) <= 4800:
 
-            # 抓目標時間的1.5小時內預報
-            # 例如...1/1 10:00 抓 09:00 ~ 12:00, 1/1 11:30 抓 12:00 ~ 15:00
-            delta = target_dt - start_time
-            if first_fcst_time is None and abs(delta.days * 24 * 3600 + delta.seconds) <= 4800:
+                    first_fcst_time = start_time
+                    weather_info = (u"3小時天氣預報 - 預報時間：\n" +
+                                    start_time.strftime("%m/%d(%a) %H:%M") + " ~ " +
+                                    end_time.strftime("%H:%M") + "\n" +
+                                    location + u"天氣概況：\n" +
+                                    weather_desc)
 
-                first_fcst_time = start_time
-                weather_info = (u"3小時天氣預報 - 預報時間：\n" +
-                                start_time.strftime("%m/%d(%a) %H:%M") + " ~ " +
-                                end_time.strftime("%H:%M") + "\n" +
-                                location + u"天氣概況：\n" +
-                                weather_desc)
-
-    logger.info("parsed api request success")
+        logger.info("parsed api request success")
     return weather_info
 
 
