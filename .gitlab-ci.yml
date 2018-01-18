@@ -8,5 +8,6 @@ job1:
   script:
     - pip3.6 install --requirement requirements.txt
     - python3.6 manage.py test
+    - exit
   tags:
     - repo
