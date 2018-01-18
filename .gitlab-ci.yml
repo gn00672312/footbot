@@ -6,6 +6,6 @@ stages:
 job1:
   stage: test
   script:
-    - python manage.py test
+    - python3.6 manage.py test
   tags:
     - repo
