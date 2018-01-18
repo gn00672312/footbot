@@ -6,6 +6,7 @@ stages:
 job1:
   stage: test
   script:
+    - pip3.6 install --requirement requirements.txt
     - python3.6 manage.py test
   tags:
     - repo
