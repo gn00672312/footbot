@@ -1,0 +1,11 @@
+image: cb/c7py36dj111:v1
+
+stages:
+  - test
+
+job1:
+  stage: test
+  script:
+    - python manage.py test
+  tags:
+    - repo
