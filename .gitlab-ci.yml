@@ -1,4 +1,4 @@
-image: cb/c7py36dj111:v1
+image: cb/c7py36dj111:v2
 
 stages:
   - test
@@ -6,7 +6,8 @@ stages:
 job1:
   stage: test
   script:
-    - pip3.6 install --requirement requirements.txt
+    - pip3.6 install pip-accel
+    - pip-accel install --requirement requirements.txt
     - python3.6 manage.py test --noinput
   tags:
-    - repo
+    - test
