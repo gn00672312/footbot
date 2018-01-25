@@ -4,7 +4,6 @@ import logging
 import datetime
 import requests
 import json
-import os
 
 from django.conf import settings
 from django.http import (HttpResponse,
@@ -118,7 +117,7 @@ def handle_text_message(event):
 
 
 def set_echo(toggle):
-    settings.ECHO = toggle
+    settings.configure(ECHO=toggle)
     logger.info(settings.ECHO)
 
 
