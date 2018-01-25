@@ -93,19 +93,26 @@ def handle_text_message(event):
         location = "大安區" if location == "" else location
         now_weather(event, location)
 
-    elif [u"閉嘴", u"安靜"] in event.message.text:
-        set_echo(False)
-        line_bot_api.reply_message(event.reply_token,
-                                   StickerSendMessage(package_id=1,
-                                                      sticker_id=16))
+    else:
+        shutup = [u"閉嘴", u"安靜"]
+        speak = [u"說話", u"講話"]
+        change_settings = False
+        for text in shutup + speak:
+            if text in event.message.text:
+                change_settings = True
 
-    elif [u"說話", u"講話"] in event.message.text:
-        set_echo(True)
-        line_bot_api.reply_message(event.reply_token,
-                                   StickerSendMessage(package_id=1,
-                                                      sticker_id=114))
-    elif settings.ECHO:
-        reply(event, event.message.text)
+                if text in shutup:
+                    sticker = StickerSendMessage(package_id=1, sticker_id=16)
+                    toggle = False
+                else:
+                    sticker = StickerSendMessage(package_id=1, sticker_id=114)
+                    toggle = True
+
+                set_echo(toggle)
+                line_bot_api.reply_message(event.reply_token, sticker)
+
+        if not change_settings and settings.ECHO:
+            reply(event, event.message.text)
 
 
 def set_echo(toggle):
