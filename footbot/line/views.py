@@ -111,6 +111,7 @@ def handle_text_message(event):
 
                 set_echo(toggle)
                 line_bot_api.reply_message(event.reply_token, sticker)
+                break
 
         if not change_settings and settings.ECHO:
             reply(event.reply_token, event.message.text)
