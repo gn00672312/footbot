@@ -118,9 +118,9 @@ def handle_text_message(event):
 
 
 def set_echo(toggle):
-    logger.info(">>>>>>>>>>", toggle)
+    logger.info(toggle)
     os.environ["ECHO"] = "True" if toggle else "False"
-    logger.info(">>>>>>>>>>", os.environ["ECHO"], settings.ECHO)
+    logger.info(settings.ECHO)
 
 
 def get_game_day(weekday=3):
