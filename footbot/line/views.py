@@ -104,20 +104,20 @@ def handle_text_message(event):
 
                 if text in shutup:
                     sticker = StickerSendMessage(package_id=1, sticker_id=16)
-                    toggle = "False"
+                    toggle = False
                 else:
                     sticker = StickerSendMessage(package_id=1, sticker_id=114)
-                    toggle = "True"
+                    toggle = True
 
                 set_echo(toggle)
                 line_bot_api.reply_message(event.reply_token, sticker)
 
         if not change_settings and settings.ECHO:
-            reply(event, event.message.text)
+            reply(event.token, event.message.text)
 
 
 def set_echo(toggle):
-    os.environ["ECHO"] = toggle
+    settings.ECHO = toggle
 
 
 def get_game_day(weekday=3):
