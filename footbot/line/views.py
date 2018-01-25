@@ -117,7 +117,7 @@ def handle_text_message(event):
 
 
 def set_echo(toggle):
-    settings.ECHO = toggle
+    os.environ["ECHO"] = "True" if toggle else "False"
 
 
 def get_game_day(weekday=3):
