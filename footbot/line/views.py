@@ -93,6 +93,24 @@ def handle_text_message(event):
         location = "大安區" if location == "" else location
         now_weather(event, location)
 
+    elif [u"閉嘴", u"安靜"] in event.message.text:
+        set_echo(False)
+        line_bot_api.reply_message(event.reply_token,
+                                   StickerSendMessage(package_id=1,
+                                                      sticker_id=16))
+
+    elif [u"說話", u"講話"] in event.message.text:
+        set_echo(True)
+        line_bot_api.reply_message(event.reply_token,
+                                   StickerSendMessage(package_id=1,
+                                                      sticker_id=114))
+    elif settings.ECHO:
+        reply(event, event.message.text)
+
+
+def set_echo(toggle):
+    settings.ECHO = toggle
+
 
 def get_game_day(weekday=3):
     today = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
@@ -133,8 +151,7 @@ def open_new_game(event, field):
 
     weather_info = get_game_day_weather_info()
 
-    line_bot_api.reply_message(event.reply_token,
-                               TextSendMessage(text=game_msg + weather_info))
+    reply(event.reply_token, game_msg + weather_info)
 
 
 def now_weather(event, location):
@@ -144,8 +161,7 @@ def now_weather(event, location):
     info = get_weather_info(now, location,
                             default_info="目前查無" + location + "天氣")
 
-    line_bot_api.reply_message(event.reply_token,
-                               TextSendMessage(text=info))
+    reply(event.reply_token, info)
 
 
 def fetch_forecast(location="大安區"):
@@ -228,5 +244,8 @@ def handle_sticker_message(event):
 def default(event):
     logger.info(event)
 
-    line_bot_api.reply_message(event.reply_token,
-                               TextSendMessage(text='Currently Not Support None Text Message'))
+    reply(event.reply_token, 'Currently Not Support None Text Message')
+
+
+def reply(token, message):
+    line_bot_api.reply_message(token, TextSendMessage(text=message))

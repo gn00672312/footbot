@@ -24,6 +24,8 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 LINE_CHANNEL_ACCESS_TOKEN = get_env_variable('LINE_CHANNEL_ACCESS_TOKEN')
 LINE_CHANNEL_SECRET = get_env_variable('LINE_CHANNEL_SECRET')
 CWB_API_KEY = get_env_variable('CWB_API_KEY')
+ECHO = False
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -86,8 +88,6 @@ DATABASES = {
     }
 }
 
-
-TEST_RUNNER = 'footbot.testing.DatabaselessTestRunner'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
