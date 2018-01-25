@@ -113,6 +113,7 @@ def handle_text_message(event):
                 line_bot_api.reply_message(event.reply_token, sticker)
                 break
 
+        logger.info(settings.ECHO)
         if not change_settings and settings.ECHO:
             reply(event.reply_token, event.message.text)
 
