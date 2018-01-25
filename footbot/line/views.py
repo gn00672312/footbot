@@ -118,7 +118,7 @@ def handle_text_message(event):
 
 
 def set_echo(toggle):
-    settings = toggle
+    settings.ECHO = toggle
     logger.info(settings.ECHO)
 
 
