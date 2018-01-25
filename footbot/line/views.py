@@ -113,13 +113,14 @@ def handle_text_message(event):
                 line_bot_api.reply_message(event.reply_token, sticker)
                 break
 
-        logger.info(settings.ECHO)
         if not change_settings and settings.ECHO:
             reply(event.reply_token, event.message.text)
 
 
 def set_echo(toggle):
+    logger.info(">>>>>>>>>>", toggle)
     os.environ["ECHO"] = "True" if toggle else "False"
+    logger.info(">>>>>>>>>>", os.environ["ECHO"], settings.ECHO)
 
 
 def get_game_day(weekday=3):
