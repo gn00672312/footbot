@@ -4,6 +4,7 @@ import logging
 import datetime
 import requests
 import json
+import random
 
 from django.conf import settings
 from django.http import (HttpResponse,
@@ -84,39 +85,45 @@ def parse_events(events):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    if u'開團' in event.message.text:
-        field = event.message.text.replace("開團", "").strip()
-        field = "台科大" if field == "" else field
-        open_new_game(event, field)
-
-    elif u"天氣" in event.message.text:
+    if u"天氣" in event.message.text:
         location = event.message.text.replace("天氣", "").strip()
         location = "大安區" if location == "" else location
         now_weather(event, location)
 
-    else:
+    elif u"@footbot" in event.message.text:
+        message = event.message.text.replace(u"@footbot", "").strip()
+
         shutup = [u"閉嘴", u"安靜"]
         speak = [u"說話", u"講話"]
-        change_settings = False
-        for text in shutup + speak:
-            if text in event.message.text:
-                change_settings = True
 
-                if text in shutup:
-                    sticker = StickerSendMessage(package_id=1, sticker_id=16)
-                    toggle = False
-                else:
-                    sticker = StickerSendMessage(package_id=1, sticker_id=114)
-                    toggle = True
+        def set_shutup():
+            cring_stickers = [8, 9, 16, 21, 111, 113, 123, 131, 135, 403]
+            sticker = StickerSendMessage(package_id=1,
+                                         sticker_id=random.choice(cring_stickers))
+            set_echo(False)
+            line_bot_api.reply_message(event.reply_token, sticker)
 
-                set_echo(toggle)
-                line_bot_api.reply_message(event.reply_token, sticker)
-                break
+        def set_speak():
+            happy_stickers = [2, 4, 10, 13, 16, 106, 114, 132, 137, 138]
+            sticker = StickerSendMessage(package_id=1,
+                                         sticker_id=random.choice(happy_stickers))
+            set_echo(True)
+            line_bot_api.reply_message(event.reply_token, sticker)
 
-        echo_config = load_conf('bot.conf', "ECHO")
+        if u'開團' in message:
+            field = event.message.text.replace("開團", "").strip()
+            field = "台科大" if field == "" else field
+            open_new_game(event, field)
+            return
 
-        if not change_settings and echo_config:
-            reply(event.reply_token, event.message.text)
+        elif [text for text in shutup if text == message]:
+            set_shutup()
+
+        elif [text for text in speak if text == message]:
+            set_speak()
+
+    elif load_conf('bot.conf', "ECHO"):
+        reply(event.reply_token, event.message.text)
 
 
 def set_echo(toggle):
