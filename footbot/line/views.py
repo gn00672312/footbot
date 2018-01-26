@@ -115,7 +115,7 @@ def handle_text_message(event):
                          "    指令: '天氣 [option]'\n"
                          "    範例 1: 輸入'天氣' -> footbot 會去抓大安區最近三小時內的預報\n" 
                          "    範例 2: 輸入'天氣 永和區' -> footbot 會去抓永和區最近三小時內的預報\n\n" 
-                         "- echo: \n\n"
+                         "- echo: \n"
                          "    說明: 讓footbot變成回聲機器人，預設為關閉\n"
                          "    指令: '@footbot [說話/講話/安靜/閉嘴]'\n"
                          "    範例 1: 輸入:'@footbot 說話' -> footbot會啟動echo功能\n"
