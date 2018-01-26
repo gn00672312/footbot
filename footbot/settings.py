@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'footbot',
     'footbot.line',
+    'footbot.utils'
 ]
 
 MIDDLEWARE = [

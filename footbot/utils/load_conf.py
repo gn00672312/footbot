@@ -8,12 +8,14 @@ def load_conf(conf_name, conf_item=None):
     config = {}
 
     try:
-        exec(open(config_file).read())
+        with open(config_file) as f:
+            exec(f.read(), {}, config)
 
         if conf_item:
             config = config[conf_item]
-    except:
-        pass
+
+    except Exception as e:
+        print('error', e)
 
     return config
 

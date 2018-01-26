@@ -22,7 +22,7 @@ from linebot.models import (MessageEvent,
                             StickerMessage,
                             StickerSendMessage)
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
-from footbot.utilities.load_conf import load_conf, write_conf
+from footbot.utils.load_conf import load_conf, write_conf
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
