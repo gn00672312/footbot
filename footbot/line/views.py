@@ -22,6 +22,7 @@ from linebot.models import (MessageEvent,
                             StickerMessage,
                             StickerSendMessage)
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from footbot.utilities.load_conf import load_conf, write_conf
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -112,13 +113,15 @@ def handle_text_message(event):
                 line_bot_api.reply_message(event.reply_token, sticker)
                 break
 
-        if not change_settings and settings.ECHO:
+        echo_config = load_conf('bot.conf', "ECHO")
+
+        if not change_settings and echo_config:
             reply(event.reply_token, event.message.text)
 
 
 def set_echo(toggle):
-    settings.configure(ECHO=toggle)
-    logger.info(settings.ECHO)
+    write_conf('bot.conf', "ECHO", toggle)
+    logger.info(load_conf('bot.conf', "ECHO"))
 
 
 def get_game_day(weekday=3):

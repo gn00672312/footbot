@@ -24,7 +24,6 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 LINE_CHANNEL_ACCESS_TOKEN = get_env_variable('LINE_CHANNEL_ACCESS_TOKEN')
 LINE_CHANNEL_SECRET = get_env_variable('LINE_CHANNEL_SECRET')
 CWB_API_KEY = get_env_variable('CWB_API_KEY')
-ECHO = False
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -127,6 +126,9 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+
+
+CONF = os.path.join(BASE_DIR, 'conf')
 
 django_heroku.settings(locals())
 
