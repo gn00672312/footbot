@@ -93,22 +93,9 @@ def handle_text_message(event):
     elif u"@footbot" in event.message.text:
         message = event.message.text.replace(u"@footbot", "").strip()
 
-        shutup = [u"閉嘴", u"安靜"]
-        speak = [u"說話", u"講話"]
-
-        def set_shutup():
-            cring_stickers = [8, 9, 16, 21, 111, 113, 123, 131, 135, 403]
-            sticker = StickerSendMessage(package_id=1,
-                                         sticker_id=random.choice(cring_stickers))
-            set_echo(False)
-            line_bot_api.reply_message(event.reply_token, sticker)
-
-        def set_speak():
-            happy_stickers = [2, 4, 10, 13, 16, 106, 114, 132, 137, 138]
-            sticker = StickerSendMessage(package_id=1,
-                                         sticker_id=random.choice(happy_stickers))
-            set_echo(True)
-            line_bot_api.reply_message(event.reply_token, sticker)
+        shutup_text = [u"閉嘴", u"安靜"]
+        speak_text = [u"說話", u"講話"]
+        help_text = [u"help", u"說明"]
 
         if u'開團' in message:
             field = event.message.text.replace("開團", "").strip()
@@ -116,11 +103,43 @@ def handle_text_message(event):
             open_new_game(event, field)
             return
 
-        elif [text for text in shutup if text == message]:
-            set_shutup()
+        elif [text for text in help_text if text == message]:
+            help_info = ("footbot為一個很簡單的對話機器人，他主要功能為以下三點：\n"
+                         "- 踢球開團: \n"
+                         "    說明: 自動開團功能，預設為台科平地團\n"
+                         "    指令: '@footbot 開團 [option]'\n"
+                         "    範例 1: 輸入'@footbot 開團' -> footbot 會自動開啟台科平地團\n" 
+                         "    範例 2: 輸入'@footbot 開團 福和橋' -> footbot 會自動開啟福和橋下平地團\n\n"
+                         "- 天氣預報: \n"
+                         "    說明: 抓大台北地區的三小時天氣預報功能，預設為大安區\n"
+                         "    指令: '天氣 [option]'\n"
+                         "    範例 1: 輸入'天氣' -> footbot 會去抓大安區最近三小時內的預報\n" 
+                         "    範例 2: 輸入'天氣 永和區' -> footbot 會去抓永和區最近三小時內的預報\n\n" 
+                         "- echo: \n\n"
+                         "    說明: 讓footbot變成回聲機器人，預設為關閉\n"
+                         "    指令: '@footbot [說話/講話/安靜/閉嘴]'\n"
+                         "    範例 1: 輸入:'@footbot 說話' -> footbot會啟動echo功能\n"
+                         "    範例 2: 輸入:'@footbot 閉嘴' -> footbot會關閉echo功能\n\n"
+                         "- 使用說明: \n"
+                         "    說明: 顯示使用說明\n"
+                         "    指令: '@footbot [help/說明]'\n"
+                         "    範例 1: 輸入:'@footbot help' -> footbot顯示使用說明\n"
+                         )
+            reply(event.reply_token, help_info)
 
-        elif [text for text in speak if text == message]:
-            set_speak()
+        elif [text for text in shutup_text if text == message]:
+            set_echo(False)
+            cring_stickers = [8, 9, 16, 21, 111, 113, 123, 131, 135, 403]
+            sticker = StickerSendMessage(package_id=1,
+                                         sticker_id=random.choice(cring_stickers))
+            line_bot_api.reply_message(event.reply_token, sticker)
+
+        elif [text for text in speak_text if text == message]:
+            set_echo(True)
+            happy_stickers = [2, 4, 10, 13, 16, 106, 114, 132, 137, 138]
+            sticker = StickerSendMessage(package_id=1,
+                                         sticker_id=random.choice(happy_stickers))
+            line_bot_api.reply_message(event.reply_token, sticker)
 
     elif load_conf('bot.conf', "ECHO"):
         reply(event.reply_token, event.message.text)
