@@ -98,7 +98,7 @@ def handle_text_message(event):
         help_text = [u"help", u"說明"]
 
         if u'開團' in message:
-            field = event.message.text.replace("開團", "").strip()
+            field = message.replace("開團", "").strip()
             field = "台科大" if field == "" else field
             open_new_game(event, field)
             return
