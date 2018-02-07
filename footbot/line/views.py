@@ -169,9 +169,11 @@ def open_new_game(event, field):
     field_zhtw = "台科大平地足球場"
     field_enus = "on NTUST hard ground football field"
 
-    if field == u"福和橋":
+    if field == "福和橋":
         field_zhtw = "福和橋下永和端平地場"
         field_enus = "on hard ground football field under FuHo bridge (Yonghe)"
+
+    logger.info(field)
 
     game_msg_zhtw = ("【練球團】{game_day} \n" +
                      field_zhtw + " \n\n"
