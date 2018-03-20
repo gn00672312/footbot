@@ -164,7 +164,7 @@ def get_game_day_weather_info():
 
 
 def open_new_game(event, field):
-    game_day = get_game_day(4)
+    game_day = get_game_day(3)
 
     field_zhtw = "台科大平地足球場"
     field_enus = "on NTUST hard ground football field"
