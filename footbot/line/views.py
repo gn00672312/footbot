@@ -197,7 +197,7 @@ def open_new_game(event, field):
 def now_weather(event, location):
 
     now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
-
+    logger.info(now, location)
     info = get_weather_info(now, location,
                             default_info="目前查無" + location + "天氣")
 
