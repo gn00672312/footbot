@@ -163,31 +163,38 @@ def get_game_day_weather_info():
                             default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_day.strftime("%a")))
 
 
-def open_new_game(event, field):
+def open_new_game(event, field, local='zhtw'):
     game_day = get_game_day(3)
 
-    field_zhtw = "台科大平地足球場"
-    field_enus = "on NTUST hard ground football field"
+    if local == 'zhtw':
 
-    if field == "福和橋":
-        field_zhtw = "福和橋下永和端平地場"
-        field_enus = "on hard ground football field under FuHo bridge (Yonghe)"
+        field_zhtw = "台科大平地足球場"
 
-    logger.info(field)
+        if field == "福和橋":
+            field_zhtw = "福和橋下永和端平地場"
 
-    game_msg_zhtw = ("【練球團】{game_day} \n" +
-                     field_zhtw + " \n\n"
-                     "今晚10:30前有4人以上成團，明晚如下雨則取消，請盡量帶球，能到的請回+1，謝謝 \n"
-                     ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
+        logger.info(field)
 
-    game_msg_enus = ("【It's Football Time】{game_day} \n" +
-                     field_enus + " \n\n"
-                     "It might rain tmr, but we'll still do a headcount first. "
-                     "If u can come, please reply '+1', thx! "
-                     "If less than 4 people reply '+1' before 10:30pm tonight, the game'll be canceled. \n"
-                     ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
+        game_msg = ("【練球團】{game_day} \n" +
+                    field_zhtw + " \n\n"
+                    "今晚10:30前有4人以上成團，明晚如下雨則取消，請盡量帶球，能到的請回+1，謝謝 \n"
+                    ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
 
-    game_msg = game_msg_zhtw + "\n" + game_msg_enus + "\n"
+
+    else:
+        field_enus = "on NTUST hard ground football field"
+
+        if field == "福和橋":
+            field_enus = "on hard ground football field under FuHo bridge (Yonghe)"
+
+        logger.info(field)
+
+        game_msg = ("【It's Football Time】{game_day} \n" +
+                    field_enus + " \n\n"
+                                 "It might rain tmr, but we'll still do a headcount first. "
+                                 "If u can come, please reply '+1', thx! "
+                                 "If less than 4 people reply '+1' before 10:30pm tonight, the game'll be canceled. \n"
+                    ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
 
     weather_info = get_game_day_weather_info()
 
@@ -197,7 +204,6 @@ def open_new_game(event, field):
 def now_weather(event, location):
 
     now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
-    logger.info(now, location)
     info = get_weather_info(now, location,
                             default_info="目前查無" + location + "天氣")
 
