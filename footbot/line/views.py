@@ -156,12 +156,14 @@ def get_game_day(weekday=3):
 
 
 def get_game_day_weather_info():
-    game_day = get_game_day(4)
-    game_day = game_day.replace(hour=18, minute=0, second=0)
+    try:
+        game_day = get_game_day(4)
+        game_day = game_day.replace(hour=18, minute=0, second=0)
 
-    return get_weather_info(game_day, location="大安區",
-                            default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_day.strftime("%a")))
-
+        return get_weather_info(game_day, location="大安區",
+                                default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_day.strftime("%a")))
+    except:
+        return ""
 
 def open_new_game(event, field, local='zhtw'):
     game_day = get_game_day(3)
@@ -177,9 +179,8 @@ def open_new_game(event, field, local='zhtw'):
 
         game_msg = ("【練球團】{game_day} \n" +
                     field_zhtw + " \n\n"
-                    "今晚10:30前有4人以上成團，明晚如下雨則取消，請盡量帶球，能到的請回+1，謝謝 \n"
-                    ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
-
+                    "今晚10:30前有4人以上成團，明晚如下雨則取消，請盡量帶球，能到的請回+1，謝謝 \n\n"
+                    ).format(game_day=game_day.strftime("%m/%d 19:30-22:00"))
 
     else:
         field_enus = "on NTUST hard ground football field"
@@ -194,7 +195,7 @@ def open_new_game(event, field, local='zhtw'):
                                  "It might rain tmr, but we'll still do a headcount first. "
                                  "If u can come, please reply '+1', thx! "
                                  "If less than 4 people reply '+1' before 10:30pm tonight, the game'll be canceled. \n"
-                    ).format(game_day=game_day.strftime("%m/%d (%a) 7:30-10:00 PM"))
+                    ).format(game_day=game_day.strftime("%m/%d 19:30-22:00"))
 
     weather_info = get_game_day_weather_info()
 
@@ -265,7 +266,7 @@ def get_weather_info(target_dt, location="大安區", default_info="目前查無
 
                     first_fcst_time = start_time
                     weather_info = (u"3小時天氣預報 - 預報時間：\n" +
-                                    start_time.strftime("%m/%d(%a) %H:%M") + " ~ " +
+                                    start_time.strftime("%m/%d %H:%M") + " ~ " +
                                     end_time.strftime("%H:%M") + "\n" +
                                     location + u"天氣概況：\n" +
                                     weather_desc)
