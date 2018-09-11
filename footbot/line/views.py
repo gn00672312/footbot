@@ -157,7 +157,7 @@ def get_game_day(weekday=3):
 
 def get_game_day_weather_info():
     try:
-        game_day = get_game_day(4)
+        game_day = get_game_day(3)
         game_day = game_day.replace(hour=18, minute=0, second=0)
 
         return get_weather_info(game_day, location="大安區",
