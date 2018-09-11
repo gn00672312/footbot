@@ -249,7 +249,12 @@ def get_weather_info(target_dt, location="大安區", default_info="目前查無
             for fcst in we["time"]:
                 start_time = datetime.datetime.strptime(fcst["startTime"], "%Y-%m-%d %H:%M:%S")
                 end_time = datetime.datetime.strptime(fcst["endTime"], "%Y-%m-%d %H:%M:%S")
-                weather_desc = fcst["elementValue"]
+                element_value = fcst["elementValue"]
+
+                if len(element_value):
+                    weather_desc = element_value[0]['value']
+                else:
+                    continue
 
                 logger.info(weather_desc)
 
