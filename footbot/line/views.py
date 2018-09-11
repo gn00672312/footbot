@@ -251,6 +251,8 @@ def get_weather_info(target_dt, location="大安區", default_info="目前查無
                 end_time = datetime.datetime.strptime(fcst["endTime"], "%Y-%m-%d %H:%M:%S")
                 weather_desc = fcst["elementValue"]
 
+                logger.info(weather_desc)
+
                 # 抓目標時間的1.5小時內預報
                 # 例如...1/1 10:00 抓 09:00 ~ 12:00, 1/1 11:30 抓 12:00 ~ 15:00
                 delta = target_dt - start_time
