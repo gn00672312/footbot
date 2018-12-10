@@ -108,13 +108,13 @@ def handle_text_message(event):
                          "- 踢球開團: \n"
                          "    說明: 自動開團功能，預設為台科平地團\n"
                          "    指令: '@footbot 開團 [option]'\n"
-                         "    範例 1: 輸入'@footbot 開團' -> footbot 會自動開啟台科平地團\n" 
+                         "    範例 1: 輸入'@footbot 開團' -> footbot 會自動開啟台科平地團\n"
                          "    範例 2: 輸入'@footbot 開團 福和橋' -> footbot 會自動開啟福和橋下平地團\n\n"
                          "- 天氣預報: \n"
                          "    說明: 抓大台北地區的三小時天氣預報功能，預設為大安區\n"
                          "    指令: '天氣 [option]'\n"
-                         "    範例 1: 輸入'天氣' -> footbot 會去抓大安區最近三小時內的預報\n" 
-                         "    範例 2: 輸入'天氣 永和區' -> footbot 會去抓永和區最近三小時內的預報\n\n" 
+                         "    範例 1: 輸入'天氣' -> footbot 會去抓大安區最近三小時內的預報\n"
+                         "    範例 2: 輸入'天氣 永和區' -> footbot 會去抓永和區最近三小時內的預報\n\n"
                          "- echo: \n"
                          "    說明: 讓footbot變成回聲機器人，預設為關閉\n"
                          "    指令: '@footbot [說話/講話/安靜/閉嘴]'\n"
@@ -165,6 +165,7 @@ def get_game_day_weather_info():
     except:
         return ""
 
+
 def open_new_game(event, field, local='zhtw'):
     game_day = get_game_day(3)
 
@@ -177,10 +178,11 @@ def open_new_game(event, field, local='zhtw'):
 
         logger.info(field)
 
-        game_msg = ("【練球團】{game_day} \n" +
+        game_msg = ("【週三踢球啊】{game_time} \n" +
                     field_zhtw + " \n\n"
-                    "今晚10:30前有4人以上成團，明晚如下雨則取消，請盡量帶球，能到的請回+1，謝謝 \n\n"
-                    ).format(game_day=game_day.strftime("%m/%d 19:30-22:00"))
+                                 "{expired_time}前有4人以上成團，如下雨則取消，能到的請回+1，謝謝 \n\n"
+                    ).format(game_time=game_day.strftime("%m/%d 19:30-22:00"),
+                             expired_time=(game_day - datetime.timedelta(days=1)).strftime("%m/%d 22:30"))
 
     else:
         field_enus = "on NTUST hard ground football field"
@@ -203,7 +205,6 @@ def open_new_game(event, field, local='zhtw'):
 
 
 def now_weather(event, location):
-
     now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
     info = get_weather_info(now, location,
                             default_info="目前查無" + location + "天氣")
@@ -263,7 +264,6 @@ def get_weather_info(target_dt, location="大安區", default_info="目前查無
                 # 例如...1/1 10:00 抓 09:00 ~ 12:00, 1/1 11:30 抓 12:00 ~ 15:00
                 delta = target_dt - start_time
                 if first_fcst_time is None and abs(delta.days * 24 * 3600 + delta.seconds) <= 4800:
-
                     first_fcst_time = start_time
                     weather_info = (u"3小時天氣預報 - 預報時間：\n" +
                                     start_time.strftime("%m/%d %H:%M") + " ~ " +
