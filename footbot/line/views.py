@@ -150,24 +150,24 @@ def set_echo(toggle):
     logger.info(load_conf('bot.conf', "ECHO"))
 
 
-def get_game_day(weekday=3):
+def get_game_dt(weekday=3):
     today = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
     return get_next_weekday(today, weekday)
 
 
-def get_game_day_weather_info():
+def get_game_dt_weather_info():
     try:
-        game_day = get_game_day(3)
-        game_day = game_day.replace(hour=18, minute=0, second=0)
+        game_dt = get_game_dt(3)
+        game_dt = game_dt.replace(hour=18, minute=0, second=0)
 
-        return get_weather_info(game_day, location="大安區",
-                                default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_day.strftime("%a")))
+        return get_weather_info(game_dt, location="大安區",
+                                default_info="目前查無{gd}晚上的大安區天氣預報".format(gd=game_dt.strftime("%a")))
     except:
         return ""
 
 
 def open_new_game(event, field, local='zhtw'):
-    game_day = get_game_day(3)
+    game_dt = get_game_dt(3)
 
     if local == 'zhtw':
 
@@ -178,11 +178,11 @@ def open_new_game(event, field, local='zhtw'):
 
         logger.info(field)
 
-        game_msg = ("【週三踢球啊】{game_time} \n" +
+        game_msg = ("【週三踢球啊】{game_dt} \n" +
                     field_zhtw + " \n\n"
-                                 "{expired_time}前有4人以上成團，如下雨則取消，能到的請回+1，謝謝 \n\n"
-                    ).format(game_time=game_day.strftime("%m/%d 19:30-22:00"),
-                             expired_time=(game_day - datetime.timedelta(days=1)).strftime("%m/%d 22:30"))
+                                 "{expired_dt}前有4人以上成團，如下雨則取消，能到的請回+1，謝謝 \n\n"
+                    ).format(game_dt=game_dt.strftime("%m/%d 19:30-22:00"),
+                             expired_dt=(game_dt - datetime.timedelta(days=1)).strftime("%m/%d 22:30"))
 
     else:
         field_enus = "on NTUST hard ground football field"
@@ -192,14 +192,14 @@ def open_new_game(event, field, local='zhtw'):
 
         logger.info(field)
 
-        game_msg = ("【It's Football Time】{game_day} \n" +
+        game_msg = ("【It's Football Time】{game_dt} \n" +
                     field_enus + " \n\n"
                                  "It might rain tmr, but we'll still do a headcount first. "
                                  "If u can come, please reply '+1', thx! "
                                  "If less than 4 people reply '+1' before 10:30pm tonight, the game'll be canceled. \n"
-                    ).format(game_day=game_day.strftime("%m/%d 19:30-22:00"))
+                    ).format(game_dt=game_dt.strftime("%m/%d 19:30-22:00"))
 
-    weather_info = get_game_day_weather_info()
+    weather_info = get_game_dt_weather_info()
 
     reply(event.reply_token, game_msg + weather_info)
 
